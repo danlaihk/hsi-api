@@ -2,6 +2,7 @@ package io.danlaihk.hsiapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.danlaihk.hsiapi.apiProcess.API;
+import io.danlaihk.hsiapi.database.DatabaseServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,13 @@ public class HsiApiApplication {
 		SpringApplication.run(HsiApiApplication.class, args);
 	}
 
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
 	@Bean
 	public RestTemplate restTemplate(RestTemplateBuilder builder) {
 		return builder.build();
 	}
-
-
 
 	@Bean
 	//main
@@ -58,19 +60,20 @@ public class HsiApiApplication {
 			System.out.println("Update DB");
 
 
-
-			updateData(ulist);
+			DatabaseServices conn = new DatabaseServices(jdbcTemplate);
+			//updateData(ulist);
+			conn.updateData(ulist);
 			System.out.println();
 		};
 	}
 
-	@Autowired
-	JdbcTemplate jdbcTemplate;
+
+
 
 	public void updateData(List<Underlying> list){
 		List<Integer> result = jdbcTemplate.query(
 				"SELECT count(*) as total from constituent;",
-				(rs, rowNum) -> Integer.valueOf(rs.getInt("total")));
+				(rs, rowNum) -> rs.getInt("total"));
 
 		int total = result.get(0);
 		if(total > 0){
