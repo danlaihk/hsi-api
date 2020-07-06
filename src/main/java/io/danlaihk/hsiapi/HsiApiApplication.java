@@ -50,14 +50,9 @@ public class HsiApiApplication {
 				ulist.add(entry.getValue());
 
 			}
-			/*
-			String json = mapper
-					.writerWithDefaultPrettyPrinter()
-					.writeValueAsString(ulist);
-			System.out.println(json); //
-			*/
-			System.out.println("-----------------------");
-			System.out.println("Update DB");
+
+			log.info("-----------------------");
+			log.info("Update DB");
 
 
 			DatabaseServices conn = new DatabaseServices(jdbcTemplate);

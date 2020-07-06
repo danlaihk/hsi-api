@@ -7,15 +7,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 public class DatabaseServices {
 
 
     private final JdbcTemplate jdbcTemplate;
-
+    private final Logger log = LoggerFactory.getLogger(HsiApiApplication.class);
     public DatabaseServices(JdbcTemplate temp){
         this.jdbcTemplate = temp;
     }
@@ -43,9 +46,29 @@ public class DatabaseServices {
 
             String statement = "INSERT INTO constituent (stime, index_type, code, name, cname) VALUES (NOW(), 'HSI', ?,?,?)";
 
-            for(Underlying u: list){
-                jdbcTemplate.update(statement, u.getCode(), u.getName(),u.getCname());
+
+                int[] resultList = jdbcTemplate.batchUpdate(statement, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement preparedStatement, int i) throws SQLException {
+                    Underlying u = list.get(i);
+                    preparedStatement.setInt(1, Integer.parseInt(u.getCode()));
+                    preparedStatement.setString(2, u.getName());
+                    preparedStatement.setString(3, u.getCname());
+                }
+
+                @Override
+                public int getBatchSize() {
+                    return list.size();
+                }
+
+            });
+
+            for(int value : resultList){
+                System.out.println(value);
+
             }
+            log.info("insert complete");
+
         }
 
 
