@@ -4,9 +4,6 @@ import io.danlaihk.hsiapi.HsiApiApplication;
 import io.danlaihk.hsiapi.Underlying;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -38,7 +35,7 @@ public class DatabaseServices {
 
             String statement = "UPDATE constituent SET " +
                     "stime = NOW(), index_type= 'HSI', name=?, cname=? " +
-                    "WHERE ?";
+                    "WHERE code =?;";
             for(Underlying u: list){
                 jdbcTemplate.update(statement,  u.getName(),u.getCname(), u.getCode());
             }

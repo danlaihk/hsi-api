@@ -56,9 +56,11 @@ public class HsiApiApplication {
 
 
 			DatabaseServices conn = new DatabaseServices(jdbcTemplate);
-			//updateData(ulist);
+
 			conn.updateData(ulist);
 			System.out.println();
+
+
 		};
 	}
 
